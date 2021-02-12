@@ -1,0 +1,17 @@
+#This goes in /etc/systemd/system/AppleIIBot.service to make the bot run at boot
+
+[Unit]
+Description=Apple Bot
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u appleBot.py
+WorkingDirectory=/home/atari8/apple2bot/
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+RestartSec=30
+User=atari8
+
+[Install]
+WantedBy=multi-user.target
