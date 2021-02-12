@@ -12,5 +12,6 @@ Dependencies. So many dependencies:
 - Tweepy. Specifically the fork that allows video uploads. https://github.com/tweepy/tweepy/pull/1414 They plan on folding that feature into the main program but as of this writing, haven't.
 - The command-line version of AppleCommander. At http://applecommander.github.io and https://github.com/AppleCommander/AppleCommander
 - Java, to run AppleCommander
+- bastoken, a tokenizer for AppleSoft BASIC created specially for this project by KrisKennaway: https://github.com/KrisKennaway/bastoken. The bot expects it to be named tokenize.py.
 - ffmpeg, for processing video files: https://ffmpeg.org
 - and in the assets/ directory: TKTK. These are not provided in this repository due to copyright.
