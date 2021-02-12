@@ -8,6 +8,7 @@ Documentation for using the bot is at https://appleiibot.com
 The main twitter posting code is based on what I learned from "The Reply to Mentions Bot" at https://realpython.com/twitter-bot-python-tweepy/#the-config-module
 
 Dependencies. So many dependencies:
+- A Twitter account, and API keys for it https://developer.twitter.com/en/products/twitter-api
 - Tweepy. Specifically the fork that allows video uploads. https://github.com/tweepy/tweepy/pull/1414 They plan on folding that feature into the main program but as of this writing, haven't.
 - LinApple, an Apple II emulator for linux. https://github.com/linappleii/linapple. I'm using a version that's built for Raspberry Pi. Maybe it's this: https://github.com/dabonetn/linapple-pie or maybe it's this: https://wiki.reactivemicro.com/Linapple_Raspberrypi *shrug*
 - The command-line version of AppleCommander. At http://applecommander.github.io and https://github.com/AppleCommander/AppleCommander
