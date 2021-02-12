@@ -15,4 +15,5 @@ Dependencies. So many dependencies:
 - Java, to run AppleCommander
 - bastoken, a tokenizer for AppleSoft BASIC created specially for this project by KrisKennaway: https://github.com/KrisKennaway/bastoken. The bot expects it to be named tokenize.py.
 - ffmpeg, for processing video files: https://ffmpeg.org
-- and in the assets/ directory: an Apple II DOS 3.3 DSK image confugured to run HELLO at boot.
+- in the assets/ directory: an Apple II DOS 3.3 DSK image confugured to run HELLO at boot.
+- an X Virtual Frame Buffer running on display 98 (/usr/bin/Xvfb :98 -ac -screen 0 1024x768x24)
