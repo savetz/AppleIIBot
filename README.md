@@ -1,5 +1,5 @@
 # AppleIIBot
-The code that runs the Apple II Twitter bot at https://twitter.com/AppleIIBot
+ The code that runs the Apple II Twitter bot at https://twitter.com/AppleIIBot
 
 I'm sharing this so people can use this as a stepping stone to making their own, different bots.
 
