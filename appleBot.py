@@ -1,5 +1,3 @@
-#AppleIIBot by @KaySavetz. 2020-2021.
-
 import tweepy
 import logging
 from botConfig import create_api
@@ -64,6 +62,22 @@ def check_mentions(api, since_id):
             green=2 #amberscreen
             logger.info("requests amber screen")
 
+        language = 0 # default to BASIC
+
+        exp = "{\w*?L\w*(?:}|\s)" #{L
+        if re.search(exp,basiccode):
+            language=1 #it's LOGO
+            logger.info("it's LOGO")
+            if(starttime == 3):
+                starttime = 0
+
+        exp = "{\w*?T\w*(?:}|\s)" #{T
+        if re.search(exp,basiccode):
+            language=2 #it's Terrapin Logo
+            logger.info("it's Terrapin LOGO")
+            if(starttime == 3):
+                starttime = 5
+
         #remove any { command
         exp = "{\w*(?:}|\s)" #{anything till space or }
         basiccode = re.sub(exp,'',basiccode)
@@ -76,20 +90,57 @@ def check_mentions(api, since_id):
             logger.info("!!! basiccode string is empty, SKIPPING")
             continue;
 
-        outputFile = open('working/incomingBASIC.txt','w')
+        exp='(https?|ftp):\/\/([\da-z\.-]+)\.([a-z]{2,6})([\/\w\?\.-]*)*\/?'
+        if (re.search(exp,basiccode)):
+            logger.info("Ooh, its a URL to a disk image")
+            if(os.path.isfile("working/BOT.dsk")):
+                os.remove("working/BOT.dsk")
+            result=os.system('curl -L -k -o working/BOT.dsk --max-filesize 143360 ' + basiccode)
+            if(os.path.isfile("working/BOT.dsk") == False):
+                logger.info("!!! DISK IMAGE FAILED, SKIPPING")
+                continue
+            if(os.path.getsize("working/BOT.dsk") != 143360):
+                logger.info("!!! NOT DSK IMAGE SIZE, SKIPPING")
+                continue
+        else:
+            outputFile = open('working/incomingBASIC.txt','w')
 
-        outputFile.write(basiccode)
-        outputFile.close()
+            outputFile.write(basiccode)
+            outputFile.close()
 
-        logger.info("Parsing program")
-        result = os.system('python3 tokenize.py working/incomingBASIC.txt working/tokenized')
-        logger.info(f"Result {result}")
-        if result==256:
-            logger.info("!!! PARSER FAILED, SKIPPING")
-            continue
+            if (language==0): #basic
+                logger.info("Parsing BASIC program")
+                result = os.system('python3 tokenize.py working/incomingBASIC.txt working/tokenized')
+                logger.info(f"Result {result}")
+                if result==256:
+                    logger.info("!!! PARSER FAILED, SKIPPING")
+                    continue
 
-        logger.info("Fresh disk image")
-        copyfile('assets/DOS33FRESHIE.dsk','working/BOT.dsk')
+                logger.info("Fresh disk image")
+                copyfile('assets/DOS33FRESHIE.dsk','working/BOT.dsk')
+
+                logger.info("Moving tokenized file into disk image")
+                result = os.system('java -jar ac.jar -p working/BOT.dsk HELLO BAS 0x801 < working/tokenized')
+
+                ###the following doesn't work
+                if result==256:
+                    logger.info("!!! APPLECOMMANDER FAILED, SKIPPING")
+                    continue
+            elif (language==1): #Apple LOGO
+                 logger.info("Fresh Apple logo disk images")
+                 copyfile('assets/apple_logo_ii.dsk','working/BOT.dsk')
+                 copyfile('assets/blank-prodos.dsk','working/BOT2.dsk')
+
+                 logger.info("Moving logo commands into disk image")
+                 result = os.system('java -jar ac.jar -ptx working/BOT.dsk STARTUP TXT < working/incomingBASIC.txt')
+            else: #Terrapin
+                 logger.info("Fresh Terrapin logo disk images")
+                 copyfile('assets/Terrapin1.dsk','working/BOT.dsk')
+                 copyfile('assets/Terrapin2.dsk','working/BOT2.dsk')
+
+                 logger.info("Moving logo commands into disk image")
+                 result = os.system('java -jar ac.jar -ptx working/BOT.dsk STARTUP.LOGO TXT < working/incomingBASIC.txt')
+
 
         if green==1:
             logger.info("Fresh linapple conf file (green)")
@@ -101,21 +152,25 @@ def check_mentions(api, since_id):
             logger.info("Fresh linapple conf file")
             copyfile('assets/linapple.conf','linapple.conf')
 
-        logger.info("Moving tokenized file into disk image")
-        #result = os.system('java -jar ac.jar -p working/BOT.dsk HELLO < working/tokenized')
-        result = os.system('java -jar ac.jar -p working/BOT.dsk HELLO BAS 0x801 < working/tokenized')
-
-        ###the following doesn't work
-        if result==256:
-            logger.info("!!! APPLECOMMANDER FAILED, SKIPPING")
-            continue
-
         logger.info("Firing up emulator")
 
-        cmd = '/home/atari8/apple2bot/linapple -1 working/BOT.dsk'.split()
+        if (language==0):
+            cmd = '/home/atari8/apple2bot/linapple -1 working/BOT.dsk'.split()
+        elif (language==1):
+            cmd = '/home/atari8/apple2bot/linapple -1 working/BOT.dsk -2 working/BOT2.dsk'.split()
+        elif (language==2):
+            cmd = '/home/atari8/apple2bot/linapple -1 working/BOT.dsk -2 working/BOT2.dsk'.split()
 
         emuPid = subprocess.Popen(cmd)
         logger.info(f"   Process ID {emuPid.pid}")
+
+        if language==1: #Logo
+            time.sleep(15) #time to boot before typing
+            logger.info("Typing RETURN to start logo")
+            os.system('xdotool search --class apple key --delay 200 Return')
+
+        #if language==2: #Terrapin Logo
+            #time.sleep(20) #time to boot before recording
 
         time.sleep(starttime)
 
@@ -189,4 +244,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
